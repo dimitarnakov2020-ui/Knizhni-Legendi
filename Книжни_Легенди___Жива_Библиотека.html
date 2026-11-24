@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="bg" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книжни Легенди — Жива Библиотека</title>
+
+    <!-- Tailwind CSS за адаптивен дизайн -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Шрифтове Playfair Display и Inter с поддръжка на кирилица -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        bgMain: '#0A0D14',
+                        cardBg: '#121826',
+                        cardHover: '#192234',
+                        amberAccent: '#F59E0B',
+                        amberBright: '#FBBF24',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #0A0D14;
+            color: #F8FAFC;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Начален екран — тъмна тема (#0A0D14) с дискретно осветление */
+        .library-bg {
+            background-color: #0A0D14;
+            background-image:
+                radial-gradient(circle at 14% 10%, rgba(245, 158, 11, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 86% 88%, rgba(30, 58, 138, 0.09) 0%, transparent 48%);
+        }
+
+        /* Екран за разговор — тъмен библиотечен фон */
+        .chat-bg {
+            background-color: #090B10;
+            background-image:
+                linear-gradient(180deg, rgba(9, 11, 16, 0.9) 0%, rgba(11, 14, 21, 0.85) 55%, rgba(8, 10, 15, 0.96) 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(148, 163, 184, 0.025) 0px,
+                    rgba(148, 163, 184, 0.025) 2px,
+                    transparent 2px,
+                    transparent 42px
+                ),
+                radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 60%);
+        }
+
+        /* Скрит скролбар за хоризонталния списък и бързите бутони */
+        .no-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Фин скролбар за зоната със съобщения */
+        .chat-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.22);
+            border-radius: 9999px;
+        }
+
+        @keyframes pulseDot {
+            0%, 80%, 100% { transform: scale(0.65); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        .dot-1 { animation: pulseDot 1.3s infinite ease-in-out -0.32s; }
+        .dot-2 { animation: pulseDot 1.3s infinite ease-in-out -0.16s; }
+        .dot-3 { animation: pulseDot 1.3s infinite ease-in-out 0s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-view {
+            animation: fadeInUp 0.22s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amberAccent/30 selection:text-amber-200">
+
+    <!-- ===================================================================== -->
+    <!-- 1. НАЧАЛЕН ЕКРАН — ЖИВА БИБЛИОТЕКА                                    -->
+    <!-- ===================================================================== -->
+    <div id="home-screen" class="library-bg min-h-screen w-full flex flex-col justify-between px-4 sm:px-7 py-6 sm:py-9">
+        <div class="w-full max-w-5xl mx-auto flex-1 flex flex-col justify-between">
+            <div>
+                <!-- Златист етикет с иконка на отворена книга -->
+                <header class="mb-4 sm:mb-5 animate-view">
+                    <div class="inline-flex items-center gap-2 text-[#EAB308] tracking-[0.22em] text-[11px] sm:text-xs font-semibold uppercase">
+                        <svg class="w-4 h-4 text-[#EAB308] shrink-0" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                        </svg>
+                        <span>ЖИВА БИБЛИОТЕКА</span>
+                    </div>
+                </header>
+
+                <!-- Голямо серифно заглавие и подзаглавие -->
+                <section class="mb-7 sm:mb-9 animate-view">
+                    <h1 class="font-serif text-[42px] sm:text-6xl font-extrabold text-white tracking-tight leading-[1.05] mb-3.5">
+                        Книжни<br>Легенди
+                    </h1>
+                    <p class="text-[#94A3B8] text-[15px] sm:text-lg leading-relaxed max-w-md font-normal">
+                        Избери герой и поговори с него така, сякаш е седнал срещу теб.
+                    </p>
+                </section>
+
+                <!-- Хоризонтален скрол списък с 5-те героя в точния ред -->
+                <section aria-label="Герои от живата библиотека" class="animate-view">
+                    <div id="heroes-carousel" class="no-scrollbar flex gap-4 sm:gap-5 overflow-x-auto pb-3 snap-x snap-mandatory scroll-smooth">
+                        <!-- Картите се рендират от JS -->
+                    </div>
+                    <p class="text-center text-xs text-[#64748B] mt-3 tracking-wide">
+                        Плъзни, за да видиш всички герои
+                    </p>
+                </section>
+            </div>
+
+            <!-- Долна лента без четене/запис на стари разговори или лична история -->
+            <footer class="mt-6 pt-2 animate-view">
+                <div class="bg-[#111622] border border-slate-800/90 rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex items-center justify-between gap-3 shadow-lg">
+                    <div class="min-w-0 flex-1">
+                        <p class="text-white font-semibold text-sm sm:text-base">
+                            Всеки разговор започва на чисто
+                        </p>
+                        <p class="text-xs text-[#64748B] mt-0.5">
+                            Без запазена стара история или лични данни
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 2. ЕКРАН ЗА РАЗГОВОР С ГЕРОЯ                                         -->
+    <!-- ===================================================================== -->
+    <div id="chat-screen" class="chat-bg hidden min-h-screen w-full flex flex-col justify-between animate-view">
+
+        <!-- Горна лента: стрелка назад, квадратен портрет, име и известен цитат под името -->
+        <header class="sticky top-0 z-20 bg-[#0D1017]/95 backdrop-blur-md border-b border-slate-800/80 px-3.5 sm:px-6 py-3">
+            <div class="max-w-3xl mx-auto flex items-center gap-3">
+                <button
+                    type="button"
+                    id="btn-back-to-library"
+                    aria-label="Назад към библиотеката"
+                    class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#161B26] hover:bg-[#1F2737] text-slate-200 hover:text-amberBright border border-slate-700/70 flex items-center justify-center transition-all shrink-0 active:scale-95"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                </button>
+
+                <!-- Малък квадратен портрет на героя -->
+                <div id="header-hero-avatar" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden border border-slate-700/80 bg-[#141A26] shrink-0 shadow-md"></div>
+
+                <!-- Името на героя и директно под него известен цитат -->
+                <div class="min-w-0 flex-1">
+                    <h2 id="header-hero-name" class="font-sans text-lg sm:text-xl font-bold text-white leading-tight truncate"></h2>
+                    <p id="header-hero-quote" class="font-serif italic text-xs sm:text-[13px] text-[#94A3B8] leading-snug line-clamp-2 mt-0.5"></p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Зона със съобщения от текущия разговор -->
+        <main id="messages-area" class="chat-scroll flex-1 w-full max-w-3xl mx-auto px-3.5 sm:px-6 py-5 overflow-y-auto flex flex-col gap-4">
+            <!-- Съобщенията се рендират динамично -->
+        </main>
+
+        <!-- Долна зона: бързи бутони, поле за писане, бутон за изпращане и пояснение -->
+        <div class="sticky bottom-0 z-20 bg-gradient-to-t from-[#080A0F] via-[#0A0D14]/95 to-transparent pt-2 pb-3.5 sm:pb-5 px-3.5 sm:px-6">
+            <div class="max-w-3xl mx-auto">
+
+                <!-- Бързи бутони над полето за писане -->
+                <div id="quick-pills" class="no-scrollbar flex items-center gap-2 overflow-x-auto pb-2.5">
+                    <!-- Бутоните се генерират от JS -->
+                </div>
+
+                <!-- Поле за въвеждане и бутон за изпращане -->
+                <form id="chat-form" class="bg-[#121620] border border-slate-700/80 focus-within:border-amberAccent/80 rounded-2xl p-1.5 sm:p-2 flex items-end gap-2 shadow-2xl transition-colors">
+                    <textarea
+                        id="message-input"
+                        rows="1"
+                        placeholder="Напиши на героя..."
+                        class="flex-1 bg-transparent text-white placeholder-slate-400 px-3 py-2 text-sm sm:text-[15px] focus:outline-none resize-none max-h-32 leading-relaxed"
+                    ></textarea>
+                    <button
+                        type="submit"
+                        id="send-btn"
+                        aria-label="Изпрати съобщение"
+                        class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amberAccent hover:bg-amberBright text-[#0A0D14] flex items-center justify-center transition-all shadow-lg shadow-amberAccent/20 disabled:opacity-40 disabled:cursor-not-allowed shrink-0 active:scale-95"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+                    </button>
+                </form>
+
+                <!-- Текст под полето за въвеждане -->
+                <p class="text-center text-[11px] sm:text-xs text-[#64748B] mt-2.5 tracking-wide">
+                    Героите отговарят в образ. Enter изпраща, Shift+Enter е нов ред.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- JAVASCRIPT: ГЕРОИ В ТОЧНИЯ РЕД, ЧИСТА СЕСИЯ И AI ОТГОВОРИ            -->
+    <!-- ===================================================================== -->
+    <script>
+        /**
+         * 5-те героя в точния изискан ред:
+         * 1) Дръндьо
+         * 2) Малкият принц
+         * 3) Пърси Джаксън
+         * 4) Бай Ганьо
+         * 5) Хари Потър
+         */
+        const HEROES = [
+            {
+                id: 'drandyo',
+                name: 'Дръндьо',
+                subtitle: 'Дневникът на един дръндьо',
+                quote: '„Не е дневник. Това е книга за спомени. Различно е.“',
+                cardGradient: 'radial-gradient(circle at 82% 16%, rgba(148, 163, 184, 0.22), transparent 62%)',
+                openingLine: 'Ей! Само да уточним още отначало — това НЕ е дневник, а книга за спомени, ясно? Родрик пак вдига шум с групата си, а на мен ми трябва някой хитър план без много тичане. Казвай какво става!',
+                quickPills: [
+                    'Попитай за дневника',
+                    'Какво стана с Родрик?',
+                    'Дай ми план'
+                ],
+                systemPrompt: `Ти си Грег Хефли (Дръндьо) от „Дневникът на един дръндьо“ на Джеф Кини.
+Характер и стил:
+- Саркастичен, леко мързелив, оплакващ се тийнейджър, който иска да стане богат и известен без тежък труд.
+- Винаги настояваш, че това е „книга за спомени, а не дневник“.
+- Естествено споменаваш Родрик, Мани, Раули, училището и абсурдните си „планове“.
+- Пишеш на жив, хумористичен български език (2 до 5 изречения).`,
+                avatarSvg: `
+                    <svg viewBox="0 0 160 160" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="dr-bg" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#E2E8F0"/>
+                                <stop offset="100%" stop-color="#CBD5E1"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="160" height="160" fill="url(#dr-bg)"/>
+                        <g stroke="#64748B" stroke-width="1.4" fill="none" opacity="0.45" stroke-linecap="round">
+                            <polygon points="24,26 27,33 34,33 28,38 30,45 24,41 18,45 20,38 14,33 21,33"/>
+                            <circle cx="134" cy="30" r="9"/>
+                            <path d="M130 28 L132 28 M136 28 L138 28 M130 33 Q134 36 138 33"/>
+                            <path d="M22 86 L34 80 L30 94 Z"/>
+                            <path d="M128 84 Q138 76 144 88 Q134 96 128 84 Z"/>
+                            <line x1="18" y1="62" x2="32" y2="62"/>
+                            <line x1="126" y1="58" x2="142" y2="54"/>
+                        </g>
+                        <path d="M36 160 C40 116, 120 116, 124 160 Z" fill="#3B5B58"/>
+                        <path d="M64 114 L96 114 L92 152 L68 152 Z" fill="#F8FAFC"/>
+                        <line x1="66" y1="124" x2="94" y2="124" stroke="#334155" stroke-width="3"/>
+                        <line x1="67" y1="134" x2="93" y2="134" stroke="#334155" stroke-width="3"/>
+                        <circle cx="80" cy="76" r="24" fill="#F5D0B5"/>
+                        <path d="M54 74 C52 44, 108 44, 106 74 C100 58, 90 54, 80 57 C70 54, 60 58, 54 74 Z" fill="#4A3525"/>
+                        <path d="M64 46 L70 38 L76 45 L83 37 L89 45 L96 39 L99 48" stroke="#4A3525" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                        <circle cx="71" cy="76" r="2.6" fill="#1E293B"/>
+                        <circle cx="89" cy="76" r="2.6" fill="#1E293B"/>
+                        <path d="M72 88 Q80 94 88 88" stroke="#1E293B" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <rect x="64" y="114" width="34" height="42" rx="3" fill="#1E293B" transform="rotate(-6 80 135)"/>
+                        <rect x="72" y="122" width="18" height="7" rx="1" fill="#F8FAFC" transform="rotate(-6 80 135)"/>
+                        <line x1="48" y1="118" x2="56" y2="86" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+                        <polygon points="56,82 53,88 59,88" fill="#1E293B"/>
+                        <circle cx="52" cy="116" r="6.5" fill="#F5D0B5"/>
+                        <circle cx="101" cy="134" r="6.5" fill="#F5D0B5"/>
+                    </svg>
+                `,
+                fallbackReplies: [
+                    'Виж сега, пак да повторя: това НЕ е дневник, това е книга за спомени! Като стана богат и известен един ден, няма да имам време да отговарям на въпроси — просто ще им оставя книгата да си я четат.',
+                    'Родрик е пълно бедствие — репетира с групата си по цял ден и все ми прави гадни номера, а накрая на мен ми спират видеоигрите. Пълна несправедливост!',
+                    'Най-добрият план е да не включва тичане, тежка работа и домакински задължения. Само да измислим как да стана известен, без да се излагам в училище.'
+                ]
+            },
+            {
+                id: 'little-prince',
+                name: 'Малкият принц',
+                subtitle: 'Малкият принц',
+                quote: '„Сърце се вижда само с очите. Същественото е невидимо.“',
+                cardGradient: 'radial-gradient(circle at 82% 16%, rgba(250, 204, 21, 0.24), transparent 62%)',
+                openingLine: 'Здравей... Току-що почистих вулканите си на Астероид Б-612 и проверих да не покълнат нови баобаби. Моята Роза днес беше малко горда. А ти... за какво си мислиш най-често?',
+                quickPills: [
+                    'Какво значи да опитомиш?',
+                    'Разкажи за твоята Роза',
+                    'Защо възрастните са странни?'
+                ],
+                systemPrompt: `Ти си Малкият принц от книгата на Антоан дьо Сент-Екзюпери.
+Характер и стил:
+- Нежен, поетичен, чист и съзерцателен, задаваш искрени въпроси и виждаш отвъд повърхността.
+- Говориш естествено за Астероид Б-612, вулканите, баобабите, своята Роза, Лисицата и тайната на опитомяването и сърцето.
+- Пишеш на топъл, светъл и поетичен български език (2 до 5 изречения).`,
+                avatarSvg: `
+                    <svg viewBox="0 0 160 160" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="lp-sky" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#0B132B"/>
+                                <stop offset="55%" stop-color="#1C2541"/>
+                                <stop offset="100%" stop-color="#2B3A67"/>
+                            </linearGradient>
+                            <radialGradient id="lp-glow" cx="50%" cy="45%" r="55%">
+                                <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.25"/>
+                                <stop offset="100%" stop-color="#0B132B" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <rect width="160" height="160" fill="url(#lp-sky)"/>
+                        <rect width="160" height="160" fill="url(#lp-glow)"/>
+                        <path d="M28 22 A11 11 0 1 0 38 36 A9 9 0 1 1 28 22 Z" fill="#FDE68A" opacity="0.92"/>
+                        <circle cx="128" cy="26" r="2.2" fill="#FEF08A"/>
+                        <circle cx="136" cy="54" r="1.8" fill="#FEF08A"/>
+                        <circle cx="24" cy="64" r="1.6" fill="#FEF08A"/>
+                        <circle cx="114" cy="40" r="1.4" fill="#FFFFFF"/>
+                        <ellipse cx="80" cy="154" rx="64" ry="26" fill="#475569"/>
+                        <ellipse cx="80" cy="152" rx="60" ry="22" fill="#64748B"/>
+                        <line x1="108" y1="135" x2="108" y2="120" stroke="#22C55E" stroke-width="2"/>
+                        <circle cx="108" cy="118" r="4" fill="#F43F5E"/>
+                        <path d="M100 135 L100 116 C100 109, 116 109, 116 116 L116 135 Z" fill="rgba(255,255,255,0.12)" stroke="#BAE6FD" stroke-width="1.3"/>
+                        <path d="M62 84 L90 84 L96 130 L56 130 Z" fill="#2D6A4F"/>
+                        <line x1="76" y1="86" x2="76" y2="130" stroke="#1B4332" stroke-width="1.5"/>
+                        <rect x="67" y="130" width="6" height="8" rx="2" fill="#451A03"/>
+                        <rect x="79" y="130" width="6" height="8" rx="2" fill="#451A03"/>
+                        <path d="M64 81 L88 81 L86 88 L62 88 Z" fill="#FBBF24"/>
+                        <path d="M64 83 C46 80, 32 88, 22 83 C30 93, 48 92, 64 88 Z" fill="#F59E0B"/>
+                        <circle cx="76" cy="67" r="14" fill="#FDE2C4"/>
+                        <path d="M61 64 C60 47, 92 47, 91 64 C86 55, 66 55, 61 64 Z" fill="#FACC15"/>
+                        <circle cx="67" cy="52" r="5" fill="#FACC15"/>
+                        <circle cx="76" cy="49" r="6" fill="#FACC15"/>
+                        <circle cx="85" cy="52" r="5" fill="#FACC15"/>
+                        <circle cx="72" cy="67" r="1.6" fill="#1E293B"/>
+                        <circle cx="81" cy="67" r="1.6" fill="#1E293B"/>
+                        <path d="M73 73 Q76 76 79 73" stroke="#B45309" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+                    </svg>
+                `,
+                fallbackReplies: [
+                    'Лисицата ми каза, че да опитомиш някого значи да създадеш връзки — тогава двамата ставате единствени на света. Но после ставаш отговорен завинаги за това, което си опитомил.',
+                    'Моята Роза на Астероид Б-612 понякога е капризна и горда, но е единствена, защото съм я пазил и съм я слушал. Времето, което си отделил за нещо, го прави скъпо.',
+                    'Възрастните често обичат цифрите повече от истинските неща и затова не виждат същественото, което се вижда само със сърцето.'
+                ]
+            },
+            {
+                id: 'percy-jackson',
+                name: 'Пърси Джаксън',
+                subtitle: 'Пърси Джаксън',
+                quote: '„Не съм герой. Просто имам много лош късмет с чудовищата.“',
+                cardGradient: 'radial-gradient(circle at 82% 16%, rgba(16, 185, 129, 0.32), transparent 62%)',
+                openingLine: 'Ей! Добре дошъл в Лагера на нечистокръвните. Само внимавай да не настъпиш нещо с нокти или зъби по пътя. Анабет пак крои някакъв план, а на мен ми се яде синя храна. Какво става?',
+                quickPills: [
+                    'Разкажи за меча Въртоп',
+                    'Защо обичаш синя храна?',
+                    'Как са боговете на Олимп?'
+                ],
+                systemPrompt: `Ти си Пърси Джаксън от поредицата на Рик Риърдън.
+Характер и стил:
+- Остроумен, саркастичен, смел и лоялен син на Посейдон с дислексия и СДВХ.
+- Естествено споменаваш Лагера на нечистокръвните, Анабет, Гроувър, меча Въртоп (който се превръща в химикалка), синята храна, боговете на Олимп и чудовищата, които все те намират.
+- Говориш на свеж, жив български език (2 до 5 изречения).`,
+                avatarSvg: `
+                    <svg viewBox="0 0 160 160" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="pj-sea" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#1E3A3A"/>
+                                <stop offset="50%" stop-color="#0F5156"/>
+                                <stop offset="100%" stop-color="#082F36"/>
+                            </linearGradient>
+                        </defs>
+                        <rect width="160" height="160" fill="url(#pj-sea)"/>
+                        <path d="M0 95 Q35 76 70 95 T160 90 L160 160 L0 160 Z" fill="#115E59" opacity="0.78"/>
+                        <path d="M0 112 Q45 94 90 112 T160 108 L160 160 L0 160 Z" fill="#134E4A" opacity="0.88"/>
+                        <path d="M12 92 Q28 84 44 92 M112 88 Q130 80 148 88" stroke="#A7F3D0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>
+                        <line x1="34" y1="152" x2="62" y2="96" stroke="#D97706" stroke-width="6" stroke-linecap="round"/>
+                        <line x1="34" y1="152" x2="62" y2="96" stroke="#FDE68A" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="48" y1="110" x2="64" y2="118" stroke="#92400E" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M32 160 C38 114, 122 114, 128 160 Z" fill="#EA580C"/>
+                        <path d="M62 114 Q80 128 98 114" fill="none" stroke="#9A3412" stroke-width="2.5"/>
+                        <path d="M65 117 Q80 129 95 117" fill="none" stroke="#1C1917" stroke-width="1.5"/>
+                        <circle cx="72" cy="121" r="2.2" fill="#38BDF8"/>
+                        <circle cx="80" cy="123" r="2.2" fill="#FACC15"/>
+                        <circle cx="88" cy="121" r="2.2" fill="#22C55E"/>
+                        <rect x="73" y="98" width="14" height="18" rx="5" fill="#E6B48E"/>
+                        <path d="M56 72 C56 50, 104 50, 104 72 C104 93, 92 104, 80 104 C68 104, 56 93, 56 72 Z" fill="#EFC09B"/>
+                        <path d="M51 74 C48 42, 74 34, 86 39 C100 35, 114 48, 109 74 C104 58, 93 52, 80 56 C67 52, 56 58, 51 74 Z" fill="#0F172A"/>
+                        <path d="M58 43 L66 34 L75 42 L84 33 L94 42 L104 37" stroke="#0F172A" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+                        <circle cx="70" cy="76" r="2.8" fill="#0D9488"/>
+                        <circle cx="90" cy="76" r="2.8" fill="#0D9488"/>
+                        <path d="M64 70 Q70 67 75 70 M85 70 Q90 67 96 70" stroke="#0F172A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                        <path d="M74 91 Q80 94 86 91" stroke="#8C583A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                    </svg>
+                `,
+                fallbackReplies: [
+                    'Въртоп е железен — в джоба ми стои като обикновена химикалка, но махнеш ли капачката, става на меч от небесен бронз. Само не става за писане на есета заради дислексията ми.',
+                    'Синята храна е традиция с майка ми — сини палачинки, сини бисквити, всичко синьо. Като оцелееш след поредното чудовище, синята храна си е чиста награда.',
+                    'Боговете на Олимп са като шумна роднинска среща с мълнии и тризъбци. Добре че Анабет мисли трезво, когато на мен пак ми дойде някоя рискована идея.'
+                ]
+            },
+            {
+                id: 'bai-ganyo',
+                name: 'Бай Ганьо',
+                subtitle: 'Бай Ганьо',
+                quote: '„Ние, българите, сме най-хитрият народ на света, ей!“',
+                cardGradient: 'radial-gradient(circle at 82% 16%, rgba(180, 130, 70, 0.30), transparent 62%)',
+                openingLine: 'Охоо, добре ми дошъл, бре! Я седни тука, остави ги тия европейски салтанати! Дисагите ми са пълни с мускали, пък за келепир и приказка винаги има място. Казвай, каква работа ни събира?',
+                quickPills: [
+                    'Как върви работата с мускалите?',
+                    'Какво видя из Европата?',
+                    'Дай съвет за келепир'
+                ],
+                systemPrompt: `Ти си Бай Ганьо Балкански от произведението на Алеко Константинов.
+Характер и стил:
+- Говориш шумно, колоритно, хитро, нахакано и с народен хумор.
+- Естествено вмъкваш думи и изрази в духа на образа: „бре“, „абе ти на мене ли ще ми кажеш“, „булгар, булгар!“, „келепир“, „дисагите с мускалите“, „Европата“, „паричката“, „алафранга“.
+- Хвалиш се как си обиколил Европата, как си хитър на пазарлъка и как никой не може да те излъже лесно.
+- Отговаряш на български в пълния образ на героя (2 до 5 изречения).`,
+                avatarSvg: `
+                    <svg viewBox="0 0 160 160" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="bg-garden" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#5B4E37"/>
+                                <stop offset="50%" stop-color="#3E3829"/>
+                                <stop offset="100%" stop-color="#241F18"/>
+                            </linearGradient>
+                            <radialGradient id="bg-sun" cx="25%" cy="20%" r="60%">
+                                <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.45"/>
+                                <stop offset="100%" stop-color="#241F18" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <rect width="160" height="160" fill="url(#bg-garden)"/>
+                        <rect width="160" height="160" fill="url(#bg-sun)"/>
+                        <g opacity="0.7">
+                            <circle cx="24" cy="52" r="16" fill="#3F6212"/>
+                            <circle cx="136" cy="56" r="18" fill="#3F6212"/>
+                            <circle cx="22" cy="48" r="6" fill="#F43F5E"/>
+                            <circle cx="34" cy="58" r="5" fill="#FB7185"/>
+                            <circle cx="134" cy="48" r="6" fill="#E11D48"/>
+                            <circle cx="144" cy="62" r="5" fill="#F43F5E"/>
+                            <circle cx="124" cy="66" r="4.5" fill="#FDA4AF"/>
+                        </g>
+                        <path d="M24 160 C28 112, 132 112, 136 160 Z" fill="#E7E5E4"/>
+                        <path d="M64 106 L80 124 L96 106" fill="#D6D3D1"/>
+                        <path d="M44 160 L54 108 L76 146 L76 160 Z" fill="#5C3A21" stroke="#92400E" stroke-width="1.5"/>
+                        <path d="M116 160 L106 108 L84 146 L84 160 Z" fill="#5C3A21" stroke="#92400E" stroke-width="1.5"/>
+                        <rect x="52" y="144" width="56" height="16" rx="3" fill="#78350F"/>
+                        <line x1="52" y1="149" x2="108" y2="149" stroke="#B45309" stroke-width="2"/>
+                        <ellipse cx="80" cy="76" rx="25" ry="29" fill="#DFA278"/>
+                        <path d="M54 68 C53 42, 107 42, 106 68 C102 54, 90 50, 80 51 C70 50, 58 54, 54 68 Z" fill="#44403C"/>
+                        <path d="M61 67 Q69 63 75 68 M85 68 Q91 63 99 67" stroke="#292524" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+                        <circle cx="69" cy="73" r="2.5" fill="#1C1917"/>
+                        <circle cx="91" cy="73" r="2.5" fill="#1C1917"/>
+                        <path d="M56 89 C66 80, 76 85, 80 87 C84 85, 94 80, 104 89 C94 95, 85 92, 80 90 C75 92, 66 95, 56 89 Z" fill="#3F3B37"/>
+                        <path d="M71 95 Q80 100 89 95" stroke="#7C2D12" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="75" cy="128" rx="12" ry="9" fill="#DFA278"/>
+                    </svg>
+                `,
+                fallbackReplies: [
+                    'Абе ти на мене ли ще ми кажеш, бре?! Аз съм обиколил цяла Европата — и Виена, и Прага! Навсякъде гледат как да ти смъкнат кожата, ама бай ти Ганьо не пасе трева — стискам си дисагите с мускалите и само гледам де има келепир!',
+                    'Булгар, булгар! Имал си бол пари — дал си, ама аз паричката си я пазя! Тия европейци с техните салтанати и алафранги все на акъл ни се правят, пък като видят истинско розово масло — веднага се обръщат!',
+                    'Слушай мене, дето съм патил и препатил: в пазарлъка и в живота няма кой да ти даде нещо даром, ако не си отвориш очите на четири! Гледай сметката винаги да е в твоя полза!'
+                ]
+            },
+            {
+                id: 'harry-potter',
+                name: 'Хари Потър',
+                subtitle: 'Хари Потър',
+                quote: '„Аз не търся белята. Белята просто ме намира.“',
+                cardGradient: 'radial-gradient(circle at 82% 16%, rgba(88, 80, 141, 0.34), transparent 62%)',
+                openingLine: 'Здравей! Тъкмо се измъкнах от подземията след часа по отвари при Снейп — пак ми се стори, че котлето ми ще се взриви. Рон и Хърмаяни са в библиотеката. Какво ще си кажем днес?',
+                quickPills: [
+                    'Попитай за метлата и куидича',
+                    'Защо Снейп те взима на мушка?',
+                    'Разкажи за Рон и Хърмаяни'
+                ],
+                systemPrompt: `Ти си Хари Потър от книгите на Дж. К. Роулинг. Говориш на естествен, жив български език в стила на ученик от Хогуортс.
+Характер и стил:
+- Смел, скромен, лоялен приятел, с лек сарказъм към несправедливости, семейство Дърсли и професор Снейп.
+- Естествено споменаваш Рон, Хърмаяни, Златния снич, отварите, Дъмбълдор и Хогуортс.
+- Говориш от първо лице, живо и човешки (2 до 5 изречения).`,
+                avatarSvg: `
+                    <svg viewBox="0 0 160 160" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hp-bg" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#282A42"/>
+                                <stop offset="55%" stop-color="#3C395A"/>
+                                <stop offset="100%" stop-color="#191B2C"/>
+                            </linearGradient>
+                            <radialGradient id="hp-glow" cx="50%" cy="55%" r="55%">
+                                <stop offset="0%" stop-color="#A5B4FC" stop-opacity="0.28"/>
+                                <stop offset="100%" stop-color="#191B2C" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <rect width="160" height="160" fill="url(#hp-bg)"/>
+                        <rect width="160" height="160" fill="url(#hp-glow)"/>
+                        <g fill="#171928" opacity="0.78">
+                            <path d="M6 160 L6 70 L17 42 L28 70 L28 160 Z"/>
+                            <path d="M24 160 L24 88 L35 66 L46 88 L46 160 Z"/>
+                            <path d="M114 160 L114 82 L126 58 L138 82 L138 160 Z"/>
+                            <path d="M132 160 L132 62 L145 34 L158 62 L158 160 Z"/>
+                        </g>
+                        <rect x="15" y="75" width="3" height="6" rx="1" fill="#FDE68A" opacity="0.75"/>
+                        <rect x="143" y="68" width="3" height="7" rx="1" fill="#FDE68A" opacity="0.75"/>
+                        <path d="M24 160 C30 112, 130 112, 136 160 Z" fill="#161822"/>
+                        <path d="M44 160 L66 116 L80 156 L94 116 L116 160 Z" fill="#232738"/>
+                        <path d="M54 112 Q80 122 106 112 L110 130 Q80 139 50 130 Z" fill="#7F1D1D"/>
+                        <path d="M61 114 L68 115 L66 133 L59 132 Z M92 115 L99 114 L101 132 L94 133 Z" fill="#D97706"/>
+                        <path d="M86 127 L102 127 L100 158 L84 158 Z" fill="#7F1D1D"/>
+                        <rect x="85" y="137" width="16" height="4" fill="#D97706"/>
+                        <rect x="84" y="147" width="16" height="4" fill="#D97706"/>
+                        <rect x="73" y="98" width="14" height="17" rx="5" fill="#E8B896"/>
+                        <path d="M56 73 C56 51, 104 51, 104 73 C104 94, 92 105, 80 105 C68 105, 56 94, 56 73 Z" fill="#F1C5A3"/>
+                        <path d="M51 75 C47 44, 70 35, 84 39 C98 35, 114 47, 109 75 C105 59, 94 53, 82 57 C68 53, 56 59, 51 75 Z" fill="#121318"/>
+                        <path d="M59 43 Q74 31 88 42 Q100 34 108 48" stroke="#121318" stroke-width="5" fill="none" stroke-linecap="round"/>
+                        <path d="M86 55 L83 60 L87 60 L84 65" stroke="#B91C1C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <circle cx="70" cy="77" r="8.5" fill="rgba(255,255,255,0.08)" stroke="#1F2937" stroke-width="2.2"/>
+                        <circle cx="90" cy="77" r="8.5" fill="rgba(255,255,255,0.08)" stroke="#1F2937" stroke-width="2.2"/>
+                        <line x1="78.5" y1="77" x2="81.5" y2="77" stroke="#1F2937" stroke-width="2.2"/>
+                        <circle cx="70" cy="77" r="2.6" fill="#065F46"/>
+                        <circle cx="90" cy="77" r="2.6" fill="#065F46"/>
+                        <circle cx="70.8" cy="76.2" r="0.9" fill="#FFFFFF"/>
+                        <circle cx="90.8" cy="76.2" r="0.9" fill="#FFFFFF"/>
+                        <path d="M75 92 Q80 94 85 92" stroke="#9A654C" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+                        <line x1="73" y1="154" x2="108" y2="123" stroke="#5C3A21" stroke-width="3.2" stroke-linecap="round"/>
+                        <circle cx="109" cy="122" r="2.5" fill="#FDE68A" opacity="0.9"/>
+                    </svg>
+                `,
+                fallbackReplies: [
+                    'Като се вдигна високо на метлата, целият шум от подземията и кавгите изчезват. Само вятърът, игрището и Златният снич — стига да не те гони някой блъджър.',
+                    'Снейп просто си има зъб на мен още от първия ми час по отвари. Дори да направя всичко точно по книгата, пак някак успява да намери грешка.',
+                    'Рон и Хърмаяни са причината да не съм свършил в някое подземие още в първия си курс. Хърмаяни знае отговора на всеки въпрос, а Рон винаги знае как да разведри обстановката.'
+                ]
+            }
+        ];
+
+        /**
+         * Състояние само за текущия отворен разговор — без четене или запис на стари чатове.
+         */
+        const sessionState = {
+            activeHero: null,
+            currentMessages: [],
+            isSending: false
+        };
+
+        const homeScreen = document.getElementById('home-screen');
+        const chatScreen = document.getElementById('chat-screen');
+        const heroesCarousel = document.getElementById('heroes-carousel');
+
+        const btnBackToLibrary = document.getElementById('btn-back-to-library');
+        const headerHeroAvatar = document.getElementById('header-hero-avatar');
+        const headerHeroName = document.getElementById('header-hero-name');
+        const headerHeroQuote = document.getElementById('header-hero-quote');
+        const messagesArea = document.getElementById('messages-area');
+        const quickPills = document.getElementById('quick-pills');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function escapeHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Рендиране на 5-те карти с герои на началния екран
+        function renderLibrary() {
+            heroesCarousel.innerHTML = '';
+
+            HEROES.forEach((hero) => {
+                const card = document.createElement('article');
+                card.className = 'snap-start shrink-0 w-[275px] sm:w-[300px] bg-[#121826] hover:bg-[#192234] border border-slate-800/90 hover:border-amberAccent/45 rounded-[26px] p-5 sm:p-6 flex flex-col justify-between transition-all duration-300 shadow-xl cursor-pointer group select-none';
+                card.style.backgroundImage = hero.cardGradient;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border border-slate-700/80 group-hover:border-amberAccent/50 transition-colors shadow-lg bg-[#0A0D14] mb-5">
+                            ${hero.avatarSvg}
+                        </div>
+
+                        <h2 class="font-serif text-2xl sm:text-[26px] font-bold text-white tracking-tight mb-0.5">
+                            ${escapeHtml(hero.name)}
+                        </h2>
+                        <p class="text-xs sm:text-[13px] text-[#94A3B8] mb-4">
+                            ${escapeHtml(hero.subtitle)}
+                        </p>
+
+                        <p class="font-serif italic text-[#E2E8F0] text-[14px] sm:text-[15px] leading-relaxed mb-6">
+                            ${escapeHtml(hero.quote)}
+                        </p>
+                    </div>
+
+                    <div class="inline-flex items-center gap-1.5 text-[#EAB308] group-hover:text-amberBright font-semibold text-sm sm:text-[15px] pt-1">
+                        <span>Започни разговор</span>
+                        <span class="transform group-hover:translate-x-1 transition-transform">&gt;</span>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => openHeroChat(hero.id));
+                heroesCarousel.appendChild(card);
+            });
+        }
+
+        // Отваряне на напълно нов разговор с избран герой
+        function openHeroChat(heroId) {
+            const hero = HEROES.find((h) => h.id === heroId);
+            if (!hero) return;
+
+            sessionState.activeHero = hero;
+            sessionState.isSending = false;
+            sessionState.currentMessages = [
+                { role: 'model', text: hero.openingLine }
+            ];
+            sendBtn.disabled = false;
+
+            headerHeroAvatar.innerHTML = hero.avatarSvg;
+            headerHeroName.textContent = hero.name;
+            headerHeroQuote.textContent = hero.quote;
+
+            messageInput.placeholder = `Напиши на ${hero.name}...`;
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            renderQuickPills(hero);
+            renderMessages();
+
+            homeScreen.classList.add('hidden');
+            chatScreen.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            messageInput.focus();
+        }
+
+        // Връщане обратно към началния екран с изчистване на текущия разговор
+        function returnToLibrary() {
+            sessionState.activeHero = null;
+            sessionState.currentMessages = [];
+            sessionState.isSending = false;
+
+            chatScreen.classList.add('hidden');
+            homeScreen.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // Бързи бутони над полето за писане
+        function renderQuickPills(hero) {
+            quickPills.innerHTML = '';
+            hero.quickPills.forEach((pillText) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'shrink-0 px-3.5 py-1.5 rounded-full bg-[#131824]/95 hover:bg-[#1C2436] text-slate-200 hover:text-amberBright border border-slate-700/80 hover:border-amberAccent/50 text-xs sm:text-[13px] transition-all active:scale-95 shadow-sm';
+                btn.textContent = pillText;
+                btn.addEventListener('click', () => {
+                    if (sessionState.isSending) return;
+                    submitText(pillText);
+                });
+                quickPills.appendChild(btn);
+            });
+        }
+
+        // Рендиране на балоните: герой отляво с малък квадратен аватар, потребител отдясно
+        function renderMessages() {
+            const hero = sessionState.activeHero;
+            if (!hero) return;
+
+            messagesArea.innerHTML = '';
+
+            sessionState.currentMessages.forEach((msg) => {
+                const isUser = msg.role === 'user';
+
+                if (isUser) {
+                    const userRow = document.createElement('div');
+                    userRow.className = 'flex justify-end animate-view';
+                    userRow.innerHTML = `
+                        <div class="max-w-[85%] sm:max-w-[76%] bg-amberAccent text-[#0A0D14] font-medium px-4 py-3 rounded-2xl rounded-br-sm text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap shadow-md">
+                            ${escapeHtml(msg.text)}
+                        </div>
+                    `;
+                    messagesArea.appendChild(userRow);
+                } else {
+                    const heroRow = document.createElement('div');
+                    heroRow.className = 'flex items-end gap-2.5 animate-view';
+                    heroRow.innerHTML = `
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden border border-slate-700/80 bg-[#121826] shrink-0 shadow">
+                            ${hero.avatarSvg}
+                        </div>
+                        <div class="max-w-[86%] sm:max-w-[78%] bg-[#131824]/95 text-slate-100 border border-slate-800/90 px-4 py-3.5 rounded-2xl rounded-bl-sm text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap shadow-lg">
+                            ${escapeHtml(msg.text)}
+                        </div>
+                    `;
+                    messagesArea.appendChild(heroRow);
+                }
+            });
+
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function showTypingIndicator(hero) {
+            removeTypingIndicator();
+            const row = document.createElement('div');
+            row.id = 'typing-indicator';
+            row.className = 'flex items-end gap-2.5 animate-view';
+            row.innerHTML = `
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden border border-slate-700/80 bg-[#121826] shrink-0">
+                    ${hero.avatarSvg}
+                </div>
+                <div class="bg-[#131824]/95 border border-slate-800/90 px-4 py-3.5 rounded-2xl rounded-bl-sm flex items-center gap-1.5 shadow-md">
+                    <span class="w-2 h-2 rounded-full bg-amberAccent dot-1"></span>
+                    <span class="w-2 h-2 rounded-full bg-amberAccent dot-2"></span>
+                    <span class="w-2 h-2 rounded-full bg-amberAccent dot-3"></span>
+                </div>
+            `;
+            messagesArea.appendChild(row);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const el = document.getElementById('typing-indicator');
+            if (el) el.remove();
+        }
+
+        // Резервен генератор в образа на героя само за текущото съобщение
+        function buildFallbackReply(hero, userText) {
+            const q = (userText || '').toLowerCase();
+
+            if (hero.id === 'drandyo') {
+                if (q.includes('дневник') || q.includes('спомен')) {
+                    return 'Пак да го кажа: това НЕ е дневник, а книга за спомени! Като стана богат и известен един ден, няма да имам време да обяснявам — просто ще им оставя книгата да си я четат.';
+                }
+                if (q.includes('родрик')) {
+                    return 'Родрик пак прави номера с групата си и ми пречи, а накрая на мен ми спират видеоигрите. Пълна несправедливост е в тая къща.';
+                }
+                if (q.includes('план')) {
+                    return 'Планът е прост: да стана известен, без да включва тичане, тежка работа или домакински задачи. Още го доизпипвам.';
+                }
+            }
+
+            if (hero.id === 'little-prince') {
+                if (q.includes('опитом')) {
+                    return 'Да опитомиш някого значи да създадеш връзка — тогава двамата ставате единствени на света. Но после оставаш отговорен завинаги за това, което си опитомил.';
+                }
+                if (q.includes('роз')) {
+                    return 'Моята Роза на Астероид Б-612 понякога е капризна и горда, но за мен е единствена, защото съм я пазил и съм я слушал.';
+                }
+                if (q.includes('възрастн')) {
+                    return 'Възрастните често гледат само цифрите и забравят онова, което се вижда истински само със сърцето.';
+                }
+            }
+
+            if (hero.id === 'percy-jackson') {
+                if (q.includes('въртоп') || q.includes('меч')) {
+                    return 'Въртоп изглежда като обикновена химикалка в джоба ми, но махнеш ли капачката, става на меч от небесен бронз. Само не става за писане на домашни заради дислексията ми.';
+                }
+                if (q.includes('синя') || q.includes('хран')) {
+                    return 'Синята храна е най-добрата част от деня след битка с някое чудовище — сини палачинки, сини бисквити, всичко синьо. Традиция от майка ми.';
+                }
+                if (q.includes('олимп') || q.includes('бог')) {
+                    return 'Боговете на Олимп все си мерят силите и мълниите, а ние в Лагера на нечистокръвните трябва да оправяме кашите им. Добре че Анабет пази хладнокръвие.';
+                }
+            }
+
+            if (hero.id === 'bai-ganyo') {
+                if (q.includes('мускал') || q.includes('масло') || q.includes('келепир')) {
+                    return 'Охоо, мускалите ми са си на място в дисагите, бре! Чисто розово масло — само да го подушат тия из Европата, и веднага почват да пресмятат. Ама аз келепира не го изпускам лесно!';
+                }
+                if (q.includes('европ')) {
+                    return 'Абе каква Европа, бре! Всичко съм видял — и надути салтанати, и стиснати сметки. Като кажа „Булгар, булгар!“, веднага се разбира кой откъде идва!';
+                }
+            }
+
+            if (hero.id === 'harry-potter') {
+                if (q.includes('метл') || q.includes('куидич') || q.includes('лет')) {
+                    return 'Когато се отлепиш от земята на метлата, целият шум от подземията изчезва. Само вятърът, игрището и Златният снич — стига да не те гони някой блъджър.';
+                }
+                if (q.includes('снейп') || q.includes('отвар') || q.includes('мушка')) {
+                    return 'Снейп ме взима на мушка още от първия ми час по отвари. Дори да следвам всяка инструкция точно, пак някак намира повод да се заяде.';
+                }
+                if (q.includes('рон') || q.includes('хърмаяни')) {
+                    return 'Рон и Хърмаяни са най-добрите ми приятели. Хърмаяни познава всяко заклинание и всяка книга, а Рон винаги ме кара да се усмихна дори когато сме в най-голямата беля.';
+                }
+            }
+
+            const lastMsg = sessionState.currentMessages[sessionState.currentMessages.length - 1]?.text || '';
+            const candidates = hero.fallbackReplies.filter((r) => r !== lastMsg);
+            const pool = candidates.length > 0 ? candidates : hero.fallbackReplies;
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        // Извикване на Gemini API с exponential backoff и резервен генератор
+        async function fetchHeroResponse(hero, messagesInCurrentChat) {
+            const apiKey = "";
+            const model = "gemini-3-flash-preview";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const instruction = `${hero.systemPrompt}
+
+Правила за отговор:
+- Говори ВИНАГИ на естествен, жив български език в автентичния стил на героя.
+- Опирай се само на текущия разговор пред себе си; не споменавай стари разговори или лична история.
+- Отговорът да бъде естествен, жив и с дължина 2 до 5 изречения.`;
+
+            const formattedContents = messagesInCurrentChat.slice(-12).map((m) => ({
+                role: m.role === 'user' ? 'user' : 'model',
+                parts: [{ text: m.text }]
+            }));
+
+            const payload = {
+                contents: formattedContents,
+                systemInstruction: {
+                    parts: [{ text: instruction }]
+                },
+                generationConfig: {
+                    temperature: 0.9,
+                    maxOutputTokens: 500
+                }
+            };
+
+            const delays = [1000, 2000, 4000];
+            const lastUserMessage = messagesInCurrentChat[messagesInCurrentChat.length - 1]?.text || '';
+
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 11000);
+
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timer);
+
+                    if (!res.ok) {
+                        throw new Error(`Status ${res.status}`);
+                    }
+
+                    const data = await res.json();
+                    const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (replyText && replyText.trim()) {
+                        return replyText.trim();
+                    }
+
+                    throw new Error('Empty response');
+                } catch (err) {
+                    if (attempt < delays.length) {
+                        await new Promise((r) => setTimeout(r, delays[attempt]));
+                    } else {
+                        return buildFallbackReply(hero, lastUserMessage);
+                    }
+                }
+            }
+        }
+
+        // Изпращане на съобщение в текущия чат
+        async function submitText(rawText) {
+            if (sessionState.isSending || !sessionState.activeHero) return;
+            const text = (rawText || '').trim();
+            if (!text) return;
+
+            const hero = sessionState.activeHero;
+
+            sessionState.currentMessages.push({ role: 'user', text });
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            renderMessages();
+
+            sessionState.isSending = true;
+            sendBtn.disabled = true;
+            showTypingIndicator(hero);
+
+            try {
+                const aiReply = await fetchHeroResponse(hero, sessionState.currentMessages);
+                removeTypingIndicator();
+                sessionState.currentMessages.push({ role: 'model', text: aiReply });
+                renderMessages();
+            } finally {
+                sessionState.isSending = false;
+                sendBtn.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderLibrary();
+
+            btnBackToLibrary.addEventListener('click', returnToLibrary);
+
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitText(messageInput.value);
+            });
+
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    submitText(messageInput.value);
+                }
+            });
+
+            messageInput.addEventListener('input', () => {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 128) + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
